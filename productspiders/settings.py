@@ -83,3 +83,12 @@ NEWSPIDER_MODULE = 'productspiders.spiders'
 #HTTPCACHE_DIR='httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES=[]
 #HTTPCACHE_STORAGE='scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:28.0)Gecko/20100101 Firefox/28.0'
+DOWNLOAD_DELAY = 3.0
+CONCURRENT_REQUESTS_PER_DOMAIN = 3
+DOWNLOAD_TIMEOUT = 20
+MAX_PROC = 2
+CONCURRENT_ITEMS = 100
+LOG_LEVEL = 'DEBUG'
+FEED_FORMAT = 'csv'
