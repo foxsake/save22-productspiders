@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import datetime
 
 from productspiders.items import WwwExpansysComSgCrawlerItem
 
@@ -32,6 +33,7 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
 
     def parse_item(self,response):
         item = WwwExpansysComSgCrawlerItem()
+        item['crawl_time'] = datetime.datetime.now()
         item['url'] = response.xpath('//html/head/link[1]/@href').extract() 
         item['sku'] = response.xpath('//@data-sku').extract()  
         
@@ -41,7 +43,10 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
 
         item['title'] = response.xpath('//div[@id="title"]/h1/text()').extract()
         item['description'] = response.xpath('//div[@id="description"]/h2/text()').extract()
-        item['image_urls'] = response.xpath('//*[@id="image"]/a/@href').extract()
+
+        item['primary_image_url'] = response.xpath('//*[@id="image"]/a/@href').extract()
+        item['image_urls'] = response.xpath('//div[@class="product__gallery"]/ul/li/a/@href').extract()
+
         item['currency'] = response.xpath('//*[@id="price"]/meta/@content').extract()
         item['current_price'] = (response.xpath('//p[@id="price"]/strong/span/text()').extract()[0] +
          response.xpath('//p[@id="price"]/strong/span/sup/text()').extract()[0] if response.xpath('//p[@id="price"]/strong/span/sup') else ''
