@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-from productspiders.items import ProductspidersItem
+from productspiders.items import WwwExpansysComSgCrawlerItem
 
 class WwwExpansysComSgCrawler(scrapy.Spider):
     name = "www_expansys_com_sg_crawler"
@@ -11,9 +11,14 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
     )
 
     def parse(self, response):
+        sgo = 'http://www.expansys.com.sg/smart-gadget-offers/'
         for ln in response.xpath('//*[@class="nitem"]/@href'):
             # print ln.extract()
-            yield scrapy.Request(ln.extract(), callback=self.parse_nitem)
+            if ln == sgo:
+                #todo
+                yield scrapy.Request(ln.extract(), callback=self.parse_nitem)
+            else:
+                yield scrapy.Request(ln.extract(), callback=self.parse_nitem)
     
     def parse_nitem(self,response):
         # print 'looking in..'
@@ -26,7 +31,7 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
             yield scrapy.Request(response.urljoin(another.extract()[0]), callback=self.parse_nitem)
 
     def parse_item(self,response):
-        item = ProductspidersItem()
+        item = WwwExpansysComSgCrawlerItem()
         item['url'] = response.xpath('//html/head/link[1]/@href').extract() 
         item['sku'] = response.xpath('//@data-sku').extract()  
         item['ean'] = response.xpath('//*[@id="prod_core"]/ul/li[2]/span/text()').extract()
@@ -36,5 +41,5 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
         item['image_urls'] = response.xpath('//*[@id="image"]/a/@href').extract()
         item['currency'] = response.xpath('//*[@id="price"]/meta/@content').extract()
         item['price'] = response.xpath('//p[@id="price"]/strong/span/text()').extract()[0] + response.xpath('//p[@id="price"]/strong/span/sup/text()').extract()[0] or None
-        print item['price']
+        # print item['price']
         yield item
