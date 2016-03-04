@@ -35,5 +35,6 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
         item['description'] = response.xpath('//div[@id="description"]/h2/text()').extract()
         item['image_urls'] = response.xpath('//*[@id="image"]/a/@href').extract()
         item['currency'] = response.xpath('//*[@id="price"]/meta/@content').extract()
-        item['price'] = response.xpath('//p[@id="price"]/strong/span/text()').extract() + '.' + response.xpath('//p[@id="price"]/strong/span/sup/text()')
+        item['price'] = response.xpath('//p[@id="price"]/strong/span/text()').extract()[0] + response.xpath('//p[@id="price"]/strong/span/sup/text()').extract()[0] or None
+        print item['price']
         yield item
