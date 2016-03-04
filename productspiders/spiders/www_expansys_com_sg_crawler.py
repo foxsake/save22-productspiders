@@ -34,12 +34,21 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
         item = WwwExpansysComSgCrawlerItem()
         item['url'] = response.xpath('//html/head/link[1]/@href').extract() 
         item['sku'] = response.xpath('//@data-sku').extract()  
+        
         item['ean'] = response.xpath('//*[@id="prod_core"]/ul/li[2]/span/text()').extract()
+        item['mfr'] = response.xpath('//*[@id="prod_core"]/ul/li[3]/span/text()').extract()  
         item['brand'] = response.xpath('//*[@id="prod_core"]/ul/li[4]/a/text()').extract() or None
+
         item['title'] = response.xpath('//div[@id="title"]/h1/text()').extract()
         item['description'] = response.xpath('//div[@id="description"]/h2/text()').extract()
         item['image_urls'] = response.xpath('//*[@id="image"]/a/@href').extract()
         item['currency'] = response.xpath('//*[@id="price"]/meta/@content').extract()
-        item['price'] = response.xpath('//p[@id="price"]/strong/span/text()').extract()[0] + response.xpath('//p[@id="price"]/strong/span/sup/text()').extract()[0] or None
-        # print item['price']
+        item['current_price'] = (response.xpath('//p[@id="price"]/strong/span/text()').extract()[0] +
+         response.xpath('//p[@id="price"]/strong/span/sup/text()').extract()[0] if response.xpath('//p[@id="price"]/strong/span/sup') else ''
+         or None)
+        if response.xpath('//*[@id="prod_core"]/span/ul/li[1]/strong/strike'):
+            item['price'] = response.xpath('//*[@id="prod_core"]/span/ul/li[1]/strong/strike/text()').extract()[0] + response.xpath('//*[@id="prod_core"]/span/ul/li/strong/strike/sup/text()').extract()[0] #if response.xpath('//*[@id="prod_core"]/span/ul/li/strong/strike') else item['current_price']
+        else:
+            item['price'] = item['current_price']
+        # print 'the price = ',item['price'],',current_price = ',item['current_price']
         yield item
