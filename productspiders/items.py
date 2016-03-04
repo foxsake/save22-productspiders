@@ -62,4 +62,4 @@ class WwwExpansysComSgCrawlerItem(scrapy.Item):
     # features = scrapy.Field()
     # rating = scrapy.Field()
 
-    # instock = scrapy.Field()
+    instock = scrapy.Field()

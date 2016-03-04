@@ -51,4 +51,5 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
         else:
             item['price'] = item['current_price']
         # print 'the price = ',item['price'],',current_price = ',item['current_price']
+        item['instock'] = response.xpath('//*[@id="stock"]/@content').extract()
         yield item
