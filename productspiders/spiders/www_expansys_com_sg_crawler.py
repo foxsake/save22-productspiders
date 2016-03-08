@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
-import datetime
+from datetime import datetime
 
 from productspiders.items import WwwExpansysComSgCrawlerItem
 
@@ -15,11 +15,19 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
         sgo = 'http://www.expansys.com.sg/smart-gadget-offers/'
         for ln in response.xpath('//*[@class="nitem"]/@href'):
             # print ln.extract()
-            if ln == sgo:
-                #todo
-                yield scrapy.Request(ln.extract(), callback=self.parse_nitem)
+            if ln.extract() == sgo:
+                print 'hell yea!--'
+                yield scrapy.Request(ln.extract(), callback=self.parse_sgo_link)
             else:
                 yield scrapy.Request(ln.extract(), callback=self.parse_nitem)
+
+    def parse_sgo_link(self,response):
+        for nav in response.xpath('//*[@id="show_products"]/ul[2]/li/a/@href').extract():
+            yield scrapy.Request(response.urljoin(nav),callback=self.parse_sgo)
+
+    def parse_sgo(self, response):
+        for itemLink in response.xpath('//*[@id="show_products"]/div/ul/li[2]/h3/a/@href').extract():
+            yield scrapy.Request(response.urljoin(itemLink),callback=self.parse_item)
     
     def parse_nitem(self,response):
         # print 'looking in..'
@@ -33,7 +41,9 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
 
     def parse_item(self,response):
         item = WwwExpansysComSgCrawlerItem()
-        item['crawl_time'] = datetime.datetime.now()
+
+        item['crawl_time'] = u'{:%Y-%m-%d %H:%M:%S}'.format(datetime.now())
+
         item['url'] = response.xpath('//html/head/link[1]/@href').extract() 
         item['sku'] = response.xpath('//@data-sku').extract()  
         
