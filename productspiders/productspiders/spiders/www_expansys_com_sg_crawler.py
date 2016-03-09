@@ -59,9 +59,11 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
         l.add_xpath('currency','//*[@id="price"]/meta/@content')
         l.add_xpath('instock','//*[@id="stock"]/@content')
 
+        l.add_xpath('current_price','//*[@id="price"]/strong/text()')
+        l.add_xpath('current_price','//*[@id="price"]/strong/sup/text()')
         l.add_xpath('current_price','//*[@id="price"]/strong/span/text()')
         l.add_xpath('current_price','//*[@id="price"]/strong/span/sup/text()')
-
+       
         l.add_xpath('categories','//*[@id="breadcrumbs"]/li/a/span/text()')
 
         l.add_xpath('description','//*[@id="description"]')
