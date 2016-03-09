@@ -56,7 +56,8 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
         l.add_xpath('brand','//*[@id="prod_core"]/ul/li[4]/a/text()')
         l.add_xpath('primary_image_url','//*[@id="image"]/a/@href')
         l.add_xpath('image_urls','//div[@class="product__gallery"]/ul/li/a/@href')
-        l.add_xpath('currency','//*[@id="price"]/meta/@content')
+        # l.add_xpath('currency','//*[@id="price"]/meta/@content')
+        l.add_value('currency','SGD')
         l.add_xpath('instock','//*[@id="stock"]/@content')
 
         l.add_xpath('current_price','//*[@id="price"]/strong/text()')
