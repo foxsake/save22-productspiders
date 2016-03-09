@@ -11,7 +11,11 @@ def parse_price(value):
         return value
 
 def get_stock(value):
-    return True if value == 'in_stock' else False
+    return True if value.lower() == 'in_stock' else False
+
+def get_rating(value):
+    return (float(value) * 100) // 5.0
+
 
 class WwwExpansysComSgLoader(ItemLoader):
 
@@ -32,6 +36,9 @@ class WwwExpansysComSgLoader(ItemLoader):
 
     description_in = Identity()
     description_out = Join()
+
+    rating_in = MapCompose(get_rating)
+    rating_out = TakeFirst()
 
 
 

@@ -65,12 +65,11 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
         l.add_xpath('categories','//*[@id="breadcrumbs"]/li/a/span/text()')
 
         l.add_xpath('description','//*[@id="description"]')
-        # l.add_xpath('rating','//*[@id="review_avg"]/span[1]/text()')
+        
+        l.add_xpath('rating','//*[@itemprop="average"]/text()')
         
         # item['ean'] = response.xpath('//*[@id="prod_core"]/ul/li[2]/span/text()').extract()
         # item['mfr'] = response.xpath('//*[@id="prod_core"]/ul/li[3]/span/text()').extract()  
-
-        # item['description'] = response.xpath('//div[@id="description"]/h2/text()').extract()
 
         # if response.xpath('//*[@id="prod_core"]/span/ul/li[1]/strong/strike'):
         #     item['price'] = response.xpath('//*[@id="prod_core"]/span/ul/li[1]/strong/strike/text()').extract()[0] + response.xpath('//*[@id="prod_core"]/span/ul/li/strong/strike/sup/text()').extract()[0] #if response.xpath('//*[@id="prod_core"]/span/ul/li/strong/strike') else item['current_price']
