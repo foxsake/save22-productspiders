@@ -1,44 +1,78 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from datetime import datetime
-
 from productspiders.items import WwwExpansysComSgCrawlerItem
 from productspiders.loader.www_expansys_com_sg_loader import WwwExpansysComSgLoader
 
-class WwwExpansysComSgCrawler(scrapy.Spider):
+from scrapy.spiders import CrawlSpider, Rule
+from scrapy.linkextractors import LinkExtractor
+
+
+class WwwExpansysComSgCrawler(CrawlSpider):
     name = "www_expansys_com_sg_crawler"
     allowed_domains = ["www.expansys.com.sg"]
     start_urls = (
         'http://www.expansys.com.sg/',
     )
 
-    def parse(self, response):
-        sgo = 'http://www.expansys.com.sg/smart-gadget-offers/'
-        for ln in response.xpath('//*[@class="nitem"]/@href'):
-            # print ln.extract()
-            if ln.extract() == sgo:
-                # print 'hell yea!--'
-                yield scrapy.Request(ln.extract(), callback=self.parse_sgo_link)
-            else:
-                yield scrapy.Request(ln.extract(), callback=self.parse_nitem)
+    rules = (
+        Rule(LinkExtractor(allow=(r'(.+)',),deny=(
+            r'(.+)/contact_us(.+)?',
+            r'(.+)/group(.+)?',
+            r'(.+)/deal-of-the-day(.+)?',
+            r'(.+)/business\+government(.+)?',
+            r'(.+)/blog(.+)?',
+            r'(.+)/forums(.+)?',
+            r'(.+)/brands(.+)?',
+            r'(.+)/public-relations(.+)?',
+            r'(.+)/partnership-program(.+)?',
+            r'(.+)/site-map(.+)?',
+            r'(.+)/terms(.+)?',
+            r'(.+)/my-account(.+)?',
+            r'(.+)/order-tracking(.+)?',
+            r'(.+)/delivery(.+)?',
+            r'(.+)/top20(.+)?',
+            r'(.+)/parrot-store(.+)?',
+            r'(.+)/apple_store_asia(.+)?',
+            r'(.+)/windows-8-landing(.+)?',
+            r'(.+)/balckbery-store-asia(.+)?',
+            r'(.+)/samsung-store(.+)?',
+            r'(.+)/htc-store(.+)?',
+            r'(.+)/sony-store(.+)?',
+            r'(.+)/dji-store(.+)?',
+            r'(.+)/parrot-store(.+)?',
+            r'(.+)/nokia-store(.+)?',
+            r'(.+)/yotaphone(.+)?',
+            )),callback='parse_item',follow=True),
+    )
 
-    def parse_sgo_link(self,response):
-        for nav in response.xpath('//*[@id="show_products"]/ul[2]/li/a/@href').extract():
-            yield scrapy.Request(response.urljoin(nav),callback=self.parse_sgo)
+    # def parse(self, response):
+    #     sgo = 'http://www.expansys.com.sg/smart-gadget-offers/'
+    #     for ln in response.xpath('//*[@class="nitem"]/@href'):
+    #         # print ln.extract()
+    #         if ln.extract() == sgo:
+    #             # print 'hell yea!--'
+    #             yield scrapy.Request(ln.extract(), callback=self.parse_sgo_link)
+    #         else:
+    #             yield scrapy.Request(ln.extract(), callback=self.parse_nitem)
 
-    def parse_sgo(self, response):
-        for itemLink in response.xpath('//*[@id="show_products"]/div/ul/li[2]/h3/a/@href').extract():
-            yield scrapy.Request(response.urljoin(itemLink),callback=self.parse_item)
+    # def parse_sgo_link(self,response):
+    #     for nav in response.xpath('//*[@id="show_products"]/ul[2]/li/a/@href').extract():
+    #         yield scrapy.Request(response.urljoin(nav),callback=self.parse_sgo)
+
+    # def parse_sgo(self, response):
+    #     for itemLink in response.xpath('//*[@id="show_products"]/div/ul/li[2]/h3/a/@href').extract():
+    #         yield scrapy.Request(response.urljoin(itemLink),callback=self.parse_item)
     
-    def parse_nitem(self,response):
-        # print 'looking in..'
-        for ln in response.xpath('//*[@id="product_listing"]/div/ul/li[@class="title"]/h3/a/@href'):
-            # print response.urljoin(ln.extract())
-            yield scrapy.Request(response.urljoin(ln.extract()),callback=self.parse_item)
+    # def parse_nitem(self,response):
+    #     # print 'looking in..'
+    #     for ln in response.xpath('//*[@id="product_listing"]/div/ul/li[@class="title"]/h3/a/@href'):
+    #         # print response.urljoin(ln.extract())
+    #         yield scrapy.Request(response.urljoin(ln.extract()),callback=self.parse_item)
 
-        another = response.xpath('//*[@id="footer_tools"]/ul/li/ul/li/a[@class="next"]/@href')
-        if another:
-            yield scrapy.Request(response.urljoin(another.extract()[0]), callback=self.parse_nitem)
+    #     another = response.xpath('//*[@id="footer_tools"]/ul/li/ul/li/a[@class="next"]/@href')
+    #     if another:
+    #         yield scrapy.Request(response.urljoin(another.extract()[0]), callback=self.parse_nitem)
 
     def parse_item(self,response):
         # item = WwwExpansysComSgCrawlerItem()
@@ -57,7 +91,7 @@ class WwwExpansysComSgCrawler(scrapy.Spider):
         l.add_xpath('primary_image_url','//*[@id="image"]/a/@href')
         l.add_xpath('image_urls','//div[@class="product__gallery"]/ul/li/a/@href')
         # l.add_xpath('currency','//*[@id="price"]/meta/@content')
-        l.add_value('currency','SGD')
+        l.add_value('currency',unicode('SGD'))
         l.add_xpath('instock','//*[@id="stock"]/@content')
 
         l.add_xpath('current_price','//*[@id="price"]/strong/text()')
