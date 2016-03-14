@@ -46,34 +46,6 @@ class WwwExpansysComSgCrawler(CrawlSpider):
             )),callback='parse_item',follow=True),
     )
 
-    # def parse(self, response):
-    #     sgo = 'http://www.expansys.com.sg/smart-gadget-offers/'
-    #     for ln in response.xpath('//*[@class="nitem"]/@href'):
-    #         # print ln.extract()
-    #         if ln.extract() == sgo:
-    #             # print 'hell yea!--'
-    #             yield scrapy.Request(ln.extract(), callback=self.parse_sgo_link)
-    #         else:
-    #             yield scrapy.Request(ln.extract(), callback=self.parse_nitem)
-
-    # def parse_sgo_link(self,response):
-    #     for nav in response.xpath('//*[@id="show_products"]/ul[2]/li/a/@href').extract():
-    #         yield scrapy.Request(response.urljoin(nav),callback=self.parse_sgo)
-
-    # def parse_sgo(self, response):
-    #     for itemLink in response.xpath('//*[@id="show_products"]/div/ul/li[2]/h3/a/@href').extract():
-    #         yield scrapy.Request(response.urljoin(itemLink),callback=self.parse_item)
-    
-    # def parse_nitem(self,response):
-    #     # print 'looking in..'
-    #     for ln in response.xpath('//*[@id="product_listing"]/div/ul/li[@class="title"]/h3/a/@href'):
-    #         # print response.urljoin(ln.extract())
-    #         yield scrapy.Request(response.urljoin(ln.extract()),callback=self.parse_item)
-
-    #     another = response.xpath('//*[@id="footer_tools"]/ul/li/ul/li/a[@class="next"]/@href')
-    #     if another:
-    #         yield scrapy.Request(response.urljoin(another.extract()[0]), callback=self.parse_nitem)
-
     def parse_item(self,response):
         # item = WwwExpansysComSgCrawlerItem()
         crawl_time = u'{:%Y-%m-%d %H:%M:%S}'.format(datetime.now())
